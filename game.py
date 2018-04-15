@@ -31,6 +31,9 @@ class CarGame():
 		self.yellowSign = pygame.image.load('Images/red_sign.png')
 		self.greenSign = pygame.image.load('Images/red_sign.png')
 		self.person = pygame.image.load('Images/person.png')
+		#speed of car and backgroung
+		self.carSpeed = 3
+		self.bgSpeed = 6
 		#
 		self.gameObjects = []
 
@@ -94,28 +97,45 @@ class CarGame():
 			pygame.display.update()
 			self.clock.tick(50)
 
-	def gameLoop():
+	def gameLoop(self):
 		bg_Img1_x = self.display_width/2 - (self.road_width / 2)
 		bg_Img1_y = 0;
 		bg_Img2_x = bg_Img1_x
 		bg_Img2_y = -self.display_height
 
-		bg_speed = 6
 		#initial position of the main car
 		car_x = (self.display_width / 2) - (self.object_width / 2)
 		car_y = self.display_height - self.object_height
-		object_speed = 3
+		car_x_change = 0
 
 		exitGame = False
 
 		while not exitGame:
+			#to move objects, and stop when meeting a red traffic sign
+			move = False
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameExit = True
 					pygame.quit()
 					quit()
 
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_LEFT:
+						car_x_change = -5
+					elif event.key == pygame.K_RIGHT:
+						car_x_change = 5
 
+				if event.type == pygame.KEYUP:
+					if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+						car_x_change = 0
+
+			car_x += car_x_change
+
+			#Detect Crash
+				#TODO:
+			###################
+
+			'''
 			#move game objects
 			for i in range(len(self.gameobjects)):
 				self.gameObjects[i].moveObject()
@@ -131,36 +151,60 @@ class CarGame():
 				del(self.gameObjects[i])
 
 			#add objects to the screen
-			
+			for obj in self.gameObjects:
+				self.screen.blit(obj.Img(), (obj.X(), obj.Y()))
+			'''
+			self.screen.fill(green)
+
+			self.screen.blit(self.mainCar, (car_x, car_y))
+			self.screen.blit(self.road, (bg_Img1_x, bg_Img1_y))
+			self.screen.blit(self.road, (bg_Img2_x, bg_Img2_y))
+
+			#background images
+			bg_Img1_y += self.bgSpeed
+			bg_Img2_y += self.bgSpeed
+
+			if bg_Img1_y >= self.display_height:
+				bg_Img1_y = -self.display_height
+
+			if bg_Img2_y >= self.display_height:
+				bg_Img2_y = -self.display_height
+
+			pygame.display.update() # update the screen
+			self.clock.tick(60) # frame per sec
 
 	# add another car, a person or a traffic sign
 	def addObject(self):
-		oType = ObjectType( random.randrange(3) )
+		oType = ObjectType( random.randrange(2) )
 		x, y, w, h, img = 1
 		if oType == ObjectType.CAR: #add a car
  			y = -self.display_height
  			#helpers
  			road_start_x =  (self.display_width/2)-112
-			road_end_x = (self.display_width/2)+112	
+ 			road_end_x = (self.display_width/2)+112
  			####
  			x = random.randrange(road_start_x, road_end_x-self.object_width)
  			w = self.object_width
  			h = self.object_height
  			img = self.otherCar
 
+		elif oType == ObjectType.SIGN: #add a traffic sign
+			y = -self.display_height
+			x = self.display_width/2 - road_width/2
+			w = self.object_width
+			h = self.object_height
+ 			# assign a sign randomly
+			if random.randrange(2) == 1:
+				img = self.greenSign
+			else:
+				img = self.redSign
+
 		elif oType == ObjectType.PERSON: #add a person
 			y = -self.display_height
 			x = self.display_width/2 - road_width/2
 			w = self.object_width
- 			h = self.object_height
- 			img = self.person
-		else: #add a traffic sign
-			y = -self.display_height
-			x = self.display_width/2 - road_width/2
-			w = self.object_width
- 			h = self.object_height
- 			# assign a sign randomly
- 			img = ( random.randrange(2) == 1) ? self.greenSign : self.redSign
+			h = self.object_height
+			img = self.person
 
 		newObject = GameObject(x, y, w, h, img , oType)
 		self.gameObjects.push(newObject)
