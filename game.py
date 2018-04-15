@@ -26,8 +26,9 @@ class CarGame():
 		self.road = pygame.image.load('Images/road.jpg')
 		self.mainCar = pygame.image.load('Images/our_car.png')
 		self.otherCar = pygame.image.load('Images/other_car.png')
-		self.crash = pygame.image.load('Images/crash.png')
+		self.crashImg = pygame.image.load('Images/crash.png')
 		self.redSign = pygame.image.load('Images/red_sign.png')
+		self.redSign = pygame.transform.scale(self.redSign, (50, 100))
 		self.yellowSign = pygame.image.load('Images/red_sign.png')
 		self.greenSign = pygame.image.load('Images/red_sign.png')
 		self.person = pygame.image.load('Images/person.png')
@@ -41,6 +42,10 @@ class CarGame():
 		self.objectY = 0
 		self.curObject = -1
 		self.curObjectImage = -1
+		self.bg_Img1_x = self.display_width/2 - (self.road_width / 2)
+		self.bg_Img1_y = 0;
+		self.bg_Img2_x = self.bg_Img1_x
+		self.bg_Img2_y = -self.display_height
 
 	def introWindow(self):
 		flag = True
@@ -103,16 +108,12 @@ class CarGame():
 			self.clock.tick(50)
 
 	def gameLoop(self):
-		bg_Img1_x = self.display_width/2 - (self.road_width / 2)
-		bg_Img1_y = 0;
-		bg_Img2_x = bg_Img1_x
-		bg_Img2_y = -self.display_height
 
 		#initial position of the main car
 		car_x = (self.display_width / 2) - (self.object_width / 2)
 		car_y = self.display_height - self.object_height
 		car_x_change = 0
-
+		self.addObject()
 		exitGame = False
 
 		while not exitGame:
@@ -137,24 +138,17 @@ class CarGame():
 			car_x += car_x_change
 
 			#check if crash occurs
-			self.checkCrash()
+			self.checkCrash(car_x, car_y)
 			
 			self.screen.fill(green)
-			self.screen.blit(self.road, (bg_Img1_x, bg_Img1_y))
-			self.screen.blit(self.road, (bg_Img2_x, bg_Img2_y))
+			self.screen.blit(self.road, (self.bg_Img1_x, self.bg_Img1_y))
+			self.screen.blit(self.road, (self.bg_Img2_x, self.bg_Img2_y))
 			self.screen.blit(self.mainCar, (car_x, car_y))
-			#add object to the screen
 			self.screen.blit(self.curObjectImage, (self.objectX, self.objectY))
-			
-			#background images
-			bg_Img1_y += self.bgSpeed
-			bg_Img2_y += self.bgSpeed
 
-			if bg_Img1_y >= self.display_height:
-				bg_Img1_y = -self.display_height
-
-			if bg_Img2_y >= self.display_height:
-				bg_Img2_y = -self.display_height
+			self.moveObjects()
+			if self.objectY > self.display_height:
+				self.addObject()
 
 			pygame.display.update() # update the screen
 			self.clock.tick(60) # frame per sec
@@ -162,16 +156,16 @@ class CarGame():
 	# add another car, a person or a traffic sign
 	def addObject(self):
 		#random object
-		self.curObject = random.randrange(2)
+		self.curObject = random.randrange(1000) % 2
 
 		if self.curObject == 0: # add a car
-			road_start_x =  (display_width/2)-112
-			road_end_x = (display_width/2)+112
-			self.objectX = random.randrange(road_start_x,road_end_x-car_width)
+			road_start_x =  (self.display_width/2)-112
+			road_end_x = (self.display_width/2)+112
+			self.objectX = random.randrange(road_start_x,road_end_x-self.object_width)
 			self.curObjectImage = self.otherCar
 
 		elif self.curObject == 1: # add a sign
-			self.objectX = self.display_width/2 - self.road_width/2 - self.object_width/2
+			self.objectX = self.display_width/2 - 140 - self.object_width/2
 			self.curObjectImage = self.redSign
 		else: # add a person
 			self.curObjectImage = self.person
@@ -179,10 +173,55 @@ class CarGame():
 		self.objectY = -200
 	
 	def moveObjects(self):
-		pass
+		#if the sign is red, stop
+		if not self.isRedSign:
+			self.bg_Img1_y += self.bgSpeed
+			self.bg_Img2_y += self.bgSpeed
 
-	def checkCrash(self):
-		pass
+		if self.bg_Img1_y >= self.display_height:
+			self.bg_Img1_y = -self.display_height
+
+		if self.bg_Img2_y >= self.display_height:
+			self.bg_Img2_y = -self.display_height
+
+		#################
+		#move objects
+		if self.curObject == 0: #car
+			self.objectY += 3
+		elif self.curObject == 1: #sign
+			if not self.isRedSign:
+				self.objectY += self.bgSpeed
+		else: #person
+			self.objectX += 2
+
+	def checkCrash(self, car_x, car_y):
+		road_start_x = (self.display_width/2) - 112
+		road_end_x = (self.display_width/2) + 112
+
+		#check crashing with the sides of the road
+		if car_x < road_start_x:
+			self.crash(car_x - self.object_width, car_y)
+		if car_x > road_end_x - self.object_width:
+			self.crash(car_x , car_y)
+
+		#check crashing with a car
+		if self.curObject == 0 and car_y < self.objectY + self.object_height:
+			if car_x >= self.objectX and car_x <= self.objectX + self.object_width:
+				self.crash(car_x-25, car_y-self.object_height/2)
+			if car_x + self.object_width >= self.objectX and car_x+self.object_width <= self.objectX+self.object_width:
+				self.crash(car_x, car_y-self.object_height/2)
+
+		#check passing a traffic light
+		if self.curObject == 1:
+			if car_y < self.objectY + self.object_height:
+				self.crash(car_x , car_y)
+
+	def crash(self, x, y):
+		self.screen.blit(self.crashImg, (x, y))
+		self.message_display("Crashed", 115, self.display_width/2, self.display_height/2)
+		pygame.display.update()
+		time.sleep(2)
+		self.gameLoop() #restart the game
 
 	def text_objects(self, text,font):
 		textSurface = font.render(text,True,black)
