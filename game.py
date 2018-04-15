@@ -54,7 +54,9 @@ class CarGame():
 			#White background
 			self.screen.fill(white)
 
-			self.message_display("Self Driving Car Game", 80, self.display_width/2, self.display_height/2)
+			#self.message_display("Self Driving Car Game", 80, self.display_width/2, self.display_height/2)
+			self.message_display("Welcome to our", 60, self.display_width/2, 100)
+			self.message_display("Self Driving Car Game", 60, self.display_width/2, 200)
 			#Start Button
 			pygame.draw.rect(self.screen, green, (start_button_x, start_button_y, button_width, button_height))
 			#Exit Button
@@ -66,15 +68,20 @@ class CarGame():
 			#mouse is clicked
 			if click[0] == 1:
 				#check if start button is clicked
-				if mouse_x >= start_button_x and mouse_x < (mouse_x + button_width) and mouse_y >= start_button_y and mouse_y < (start_button_y + button_height):
-					pygame.draw.rect(self.screen, blue, (200,400,100,50))
+				if mouse_x >= start_button_x and mouse_x < (start_button_x + button_width) and mouse_y >= start_button_y and mouse_y < (start_button_y + button_height):
 					flag = False
+					print('Start Button Clicked')
 
-				if mouse_x >= start_button_x and mouse_x < (mouse_x + button_width) and mouse_y >= start_button_y and mouse_y < (start_button_y + button_height):
-					pygame.draw.rect(self.screen, blue, (500,400,100,50))
+				if mouse_x >= exit_button_x and mouse_x < (exit_button_x + button_width) and mouse_y >= exit_button_y and mouse_y < (exit_button_y + button_height):
 					if click[0] == 1:
+						print('Exit Button Clicked')
 						pygame.quit()
 						quit()
+			else:
+				if mouse_x >= start_button_x and mouse_x < (start_button_x + button_width) and mouse_y >= start_button_y and mouse_y < (start_button_y + button_height):
+					pygame.draw.rect(self.screen, blue, (200,400,100,50))
+				if mouse_x >= exit_button_x and mouse_x < (exit_button_x + button_width) and mouse_y >= exit_button_y and mouse_y < (exit_button_y + button_height):
+					pygame.draw.rect(self.screen, blue, (500,400,100,50))
 
 			self.message_display("Start", 40, start_button_x + button_width/2, start_button_y + button_height/2)
 			self.message_display("Exit", 40, exit_button_x + button_width/2, exit_button_y + button_height/2)
