@@ -80,9 +80,9 @@ class CarGame():
 			else:
 				#change button color on hover
 				if mouse_x >= start_button_x and mouse_x < (start_button_x + button_width) and mouse_y >= start_button_y and mouse_y < (start_button_y + button_height):
-					pygame.draw.rect(self.screen, blue, (start_button_x, start_button_y, start_button_x + button_width, start_button_y + button_height))
+					pygame.draw.rect(self.screen, blue, (start_button_x, start_button_y, button_width, button_height))
 				elif mouse_x >= exit_button_x and mouse_x < (exit_button_x + button_width) and mouse_y >= exit_button_y and mouse_y < (exit_button_y + button_height):
-					pygame.draw.rect(self.screen, blue, (exit_button_x, exit_button_y, exit_button_x + button_width, exit_button_y + button_height))
+					pygame.draw.rect(self.screen, blue, (exit_button_x, exit_button_y, button_width, button_height))
 
 			self.message_display("Start", 40, start_button_x + button_width/2, start_button_y + button_height/2)
 			self.message_display("Exit", 40, exit_button_x + button_width/2, exit_button_y + button_height/2)
