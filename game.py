@@ -9,7 +9,7 @@ red = (255,0,0)
 blue = (0,0,255)
 
 class CarGame():
-	self __init__():
+	def __init__(self):
 		self.display_width = 800
 		self.display_height = 600
 		self.road_width = 360
@@ -53,7 +53,8 @@ class CarGame():
 			
 			#White background
 			self.screen.fill(white)
-			message_display("Self Driving Car Game", 100, self.display_width/2, self.display_height/2)
+
+			self.message_display("Self Driving Car Game", 80, self.display_width/2, self.display_height/2)
 			#Start Button
 			pygame.draw.rect(self.screen, green, (start_button_x, start_button_y, button_width, button_height))
 			#Exit Button
@@ -66,20 +67,30 @@ class CarGame():
 			if click[0] == 1:
 				#check if start button is clicked
 				if mouse_x >= start_button_x and mouse_x < (mouse_x + button_width) and mouse_y >= start_button_y and mouse_y < (start_button_y + button_height):
-					pygame.draw.rect(gameDisplay,blue,(200,400,100,50))
+					pygame.draw.rect(self.screen, blue, (200,400,100,50))
 					flag = False
 
 				if mouse_x >= start_button_x and mouse_x < (mouse_x + button_width) and mouse_y >= start_button_y and mouse_y < (start_button_y + button_height):
-					pygame.draw.rect(gameDisplay,blue,(500,400,100,50))
+					pygame.draw.rect(self.screen, blue, (500,400,100,50))
 					if click[0] == 1:
 						pygame.quit()
 						quit()
 
-			message_display("Go",40,menu1_x+menu_width/2,menu1_y+menu_height/2)
-			message_display("Exit",40,menu2_x+menu_width/2,menu2_y+menu_height/2)
+			self.message_display("Start", 40, start_button_x + button_width/2, start_button_y + button_height/2)
+			self.message_display("Exit", 40, exit_button_x + button_width/2, exit_button_y + button_height/2)
 			
 			pygame.display.update()
-			clock.tick(50)
+			self.clock.tick(50)
+
+	def text_objects(self, text,font):
+		textSurface = font.render(text,True,black)
+		return textSurface, textSurface.get_rect()
+
+	def message_display(self, text, size, x, y):
+		font = pygame.font.Font("freesansbold.ttf", size)
+		text_surface , text_rectangle = self.text_objects(text, font)
+		text_rectangle.center =(x, y)
+		self.screen.blit(text_surface, text_rectangle)
 
 	def startGame(self):
-		intro()
+		self.introWindow()
