@@ -42,8 +42,44 @@ class CarGame():
 
 		#Wait until exit or start is pressed
 		while flag:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					pygame.quit()
+					quit()
 
+			#draw a black rect => graphics issue
+			pygame.draw.rect(self.screen,black,(start_button_x, start_button_y, button_width, button_height))
+			pygame.draw.rect(self.screen,black,(exit_button_x, exit_button_y, button_width, button_height))
+			
+			#White background
+			self.screen.fill(white)
+			message_display("Self Driving Car Game", 100, self.display_width/2, self.display_height/2)
+			#Start Button
+			pygame.draw.rect(self.screen, green, (start_button_x, start_button_y, button_width, button_height))
+			#Exit Button
+			pygame.draw.rect(self.screen, red, (exit_button_x, exit_button_y, button_width, button_height))
 
+			(mouse_x, mouse_y) = pygame.mouse.get_pos()
+			click = pygame.mouse.get_pressed()
+
+			#mouse is clicked
+			if click[0] == 1:
+				#check if start button is clicked
+				if mouse_x >= start_button_x and mouse_x < (mouse_x + button_width) and mouse_y >= start_button_y and mouse_y < (start_button_y + button_height):
+					pygame.draw.rect(gameDisplay,blue,(200,400,100,50))
+					flag = False
+
+				if mouse_x >= start_button_x and mouse_x < (mouse_x + button_width) and mouse_y >= start_button_y and mouse_y < (start_button_y + button_height):
+					pygame.draw.rect(gameDisplay,blue,(500,400,100,50))
+					if click[0] == 1:
+						pygame.quit()
+						quit()
+
+			message_display("Go",40,menu1_x+menu_width/2,menu1_y+menu_height/2)
+			message_display("Exit",40,menu2_x+menu_width/2,menu2_y+menu_height/2)
+			
+			pygame.display.update()
+			clock.tick(50)
 
 	def startGame(self):
 		intro()
