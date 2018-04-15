@@ -36,6 +36,11 @@ class CarGame():
 		self.bgSpeed = 6
 		#
 		self.gameObjects = []
+		self.isRedSign = False
+		self.objectX = 0
+		self.objectY = 0
+		self.curObject = -1
+		self.curObjectImage = -1
 
 	def introWindow(self):
 		flag = True
@@ -131,15 +136,16 @@ class CarGame():
 
 			car_x += car_x_change
 
-			#Detect Crash
-				#TODO:
-			###################
+			#check if crash occurs
+			self.checkCrash()
 			
 			self.screen.fill(green)
 			self.screen.blit(self.road, (bg_Img1_x, bg_Img1_y))
 			self.screen.blit(self.road, (bg_Img2_x, bg_Img2_y))
 			self.screen.blit(self.mainCar, (car_x, car_y))
-
+			#add object to the screen
+			self.screen.blit(self.curObjectImage, (self.objectX, self.objectY))
+			
 			#background images
 			bg_Img1_y += self.bgSpeed
 			bg_Img2_y += self.bgSpeed
@@ -155,39 +161,28 @@ class CarGame():
 
 	# add another car, a person or a traffic sign
 	def addObject(self):
-		oType = ObjectType( random.randrange(2) )
-		x, y, w, h, img = 1
-		if oType == ObjectType.CAR: #add a car
- 			y = -self.display_height
- 			#helpers
- 			road_start_x =  (self.display_width/2)-112
- 			road_end_x = (self.display_width/2)+112
- 			####
- 			x = random.randrange(road_start_x, road_end_x-self.object_width)
- 			w = self.object_width
- 			h = self.object_height
- 			img = self.otherCar
+		#random object
+		self.curObject = random.randrange(2)
 
-		elif oType == ObjectType.SIGN: #add a traffic sign
-			y = -self.display_height
-			x = self.display_width/2 - road_width/2
-			w = self.object_width
-			h = self.object_height
- 			# assign a sign randomly
-			if random.randrange(2) == 1:
-				img = self.greenSign
-			else:
-				img = self.redSign
+		if self.curObject == 0: # add a car
+			road_start_x =  (display_width/2)-112
+			road_end_x = (display_width/2)+112
+			self.objectX = random.randrange(road_start_x,road_end_x-car_width)
+			self.curObjectImage = self.otherCar
 
-		elif oType == ObjectType.PERSON: #add a person
-			y = -self.display_height
-			x = self.display_width/2 - road_width/2
-			w = self.object_width
-			h = self.object_height
-			img = self.person
+		elif self.curObject == 1: # add a sign
+			self.objectX = self.display_width/2 - self.road_width/2 - self.object_width/2
+			self.curObjectImage = self.redSign
+		else: # add a person
+			self.curObjectImage = self.person
 
-		newObject = GameObject(x, y, w, h, img , oType)
-		self.gameObjects.push(newObject)
+		self.objectY = -200
+	
+	def moveObjects(self):
+		pass
+
+	def checkCrash(self):
+		pass
 
 	def text_objects(self, text,font):
 		textSurface = font.render(text,True,black)
