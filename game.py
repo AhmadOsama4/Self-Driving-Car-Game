@@ -134,31 +134,11 @@ class CarGame():
 			#Detect Crash
 				#TODO:
 			###################
-
-			'''
-			#move game objects
-			for i in range(len(self.gameobjects)):
-				self.gameObjects[i].moveObject()
-
-			#get indexes of those objects to be removed
-			delObjects = []
-			for i in range(len(self.gameobjects)):
-				if self.gameobjects[i].Y() > self.display_height or self.gameobjects[i].X() > (self.display_width+self.road_width/2):
-					delObjects.push(i)
-
-			#remove object
-			for i in delObjects:
-				del(self.gameObjects[i])
-
-			#add objects to the screen
-			for obj in self.gameObjects:
-				self.screen.blit(obj.Img(), (obj.X(), obj.Y()))
-			'''
+			
 			self.screen.fill(green)
-
-			self.screen.blit(self.mainCar, (car_x, car_y))
 			self.screen.blit(self.road, (bg_Img1_x, bg_Img1_y))
 			self.screen.blit(self.road, (bg_Img2_x, bg_Img2_y))
+			self.screen.blit(self.mainCar, (car_x, car_y))
 
 			#background images
 			bg_Img1_y += self.bgSpeed
