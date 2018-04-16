@@ -29,7 +29,9 @@ class CarGame():
 		self.redSign = pygame.image.load('Images/red_sign.png')
 		self.redSign = pygame.transform.scale(self.redSign, (50, 100))
 		self.yellowSign = pygame.image.load('Images/red_sign.png')
+		self.yellowSign = pygame.transform.scale(self.yellowSign, (50, 100))
 		self.greenSign = pygame.image.load('Images/red_sign.png')
+		self.greenSign = pygame.transform.scale(self.greenSign, (50, 100))
 		self.person = pygame.image.load('Images/person.png')
 		#speed of car and backgroung
 		self.personSpeed = 0
@@ -49,6 +51,7 @@ class CarGame():
 		self.car_x = -1
 		self.car_y = -1
 		self.car_x_change = 0
+		self.counter = 1
 
 	def introWindow(self):
 		flag = True
@@ -135,6 +138,17 @@ class CarGame():
 			if self.objectY > self.display_height:
 				self.addObject()
 
+			if self.curObject == 1:
+				self.counter += 1
+				#change sign to yellow
+				if self.counter >= 150 and self.counter < 300:
+					self.curObjectImage = self.yellowSign
+				#change sign to green
+				elif self.counter >= 300:
+					self.isRedSign = False
+					self.curObjectImage = self.greenSign
+
+
 			pygame.display.update() # update the screen
 			self.clock.tick(60) # frame per sec
 
@@ -172,7 +186,7 @@ class CarGame():
 	def addObject(self):
 		#random object
 		self.curObject = random.randrange(1000) % 2
-		self.curObject = 0
+		self.curObject = 1
 		if self.curObject == 0: # add a car
 			road_start_x =  (self.display_width/2)-112
 			road_end_x = (self.display_width/2)+112
@@ -180,11 +194,13 @@ class CarGame():
 			self.curObjectImage = self.otherCar
 
 		elif self.curObject == 1: # add a sign
+			self.isRedSign = True
 			self.objectX = self.display_width/2 - 140 - self.object_width/2
 			self.curObjectImage = self.redSign
 		else: # add a person
 			self.curObjectImage = self.person
 
+		self.counter = 0
 		self.objectY = -200
 	
 	def moveObjects(self):
@@ -226,7 +242,7 @@ class CarGame():
 				self.crash(car_x, car_y-self.object_height/2)
 
 		#check passing a traffic light
-		if self.curObject == 1:
+		if self.curObject == 1 and self.isRedSign:
 			if car_y < self.objectY + self.object_height:
 				self.crash(car_x , car_y)
 
