@@ -156,6 +156,7 @@ class CarGame():
 			self.screen.blit(self.curObjectImage, (self.objectX, self.objectY))
 
 			self.moveObjects()
+			#object went out of the page
 			if self.objectY > self.display_height:
 				self.addObject()
 
@@ -196,7 +197,7 @@ class CarGame():
 	def addObject(self):
 		#random object
 		self.curObject = random.randrange(1000) % 2
-
+		self.curObject = 0
 		if self.curObject == 0: # add a car
 			road_start_x =  (self.display_width/2)-112
 			road_end_x = (self.display_width/2)+112
