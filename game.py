@@ -144,10 +144,10 @@ class CarGame():
 			if self.curObject == 1:
 				self.counter += 1
 				#change sign to yellow
-				if self.counter >= 150 and self.counter < 300:
+				if self.counter >= 120 and self.counter < 240:
 					self.curObjectImage = self.yellowSign
 				#change sign to green
-				elif self.counter >= 300:
+				elif self.counter >= 240:
 					self.isRedSign = False
 					self.curObjectImage = self.greenSign
 
@@ -189,7 +189,7 @@ class CarGame():
 	def addObject(self):
 		#random object
 		self.curObject = random.randrange(1000) % 2
-		self.curObject = 1
+		#self.curObject = 1
 		self.isRedSign = False
 		if self.curObject == 0: # add a car
 			road_start_x =  (self.display_width/2)-112
@@ -247,7 +247,7 @@ class CarGame():
 		#check passing a traffic light
 		if self.curObject == 1 and self.isRedSign:
 			if car_y < self.objectY + self.object_height:
-				self.crash(car_x , car_y)
+				self.crash(car_x , car_y - 50)
 
 	def crash(self, x, y):
 		self.screen.blit(self.crashImg, (x, y))
