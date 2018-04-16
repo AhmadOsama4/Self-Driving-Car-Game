@@ -28,10 +28,13 @@ class CarGame():
 		self.crashImg = pygame.image.load('Images/crash.png')
 		self.redSign = pygame.image.load('Images/red_sign.png')
 		self.redSign = pygame.transform.scale(self.redSign, (50, 100))
-		self.yellowSign = pygame.image.load('Images/red_sign.png')
+
+		self.yellowSign = pygame.image.load('Images/yellow_sign.png')
 		self.yellowSign = pygame.transform.scale(self.yellowSign, (50, 100))
-		self.greenSign = pygame.image.load('Images/red_sign.png')
+
+		self.greenSign = pygame.image.load('Images/green_sign.png')
 		self.greenSign = pygame.transform.scale(self.greenSign, (50, 100))
+
 		self.person = pygame.image.load('Images/person.png')
 		#speed of car and backgroung
 		self.personSpeed = 0
@@ -187,6 +190,7 @@ class CarGame():
 		#random object
 		self.curObject = random.randrange(1000) % 2
 		self.curObject = 1
+		self.isRedSign = False
 		if self.curObject == 0: # add a car
 			road_start_x =  (self.display_width/2)-112
 			road_end_x = (self.display_width/2)+112
@@ -219,8 +223,7 @@ class CarGame():
 		if self.curObject == 0: #car
 			self.objectY += self.carSpeed
 		elif self.curObject == 1: #sign
-			if not self.isRedSign:
-				self.objectY += self.bgSpeed
+			self.objectY += self.bgSpeed
 		else: #person
 			self.objectX += self.personSpeed
 
