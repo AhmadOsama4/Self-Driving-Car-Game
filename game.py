@@ -120,32 +120,7 @@ class CarGame():
 		exitGame = False
 		self.car_x_change = 0		
 		while not exitGame:
-			exitGame = self.gameController()
-			# for event in pygame.event.get():
-			# 	if event.type == pygame.QUIT:
-			# 		pygame.quit()
-			# 		quit()
-
-			# 	#left or right buttons prssed
-			# 	if event.type == pygame.KEYDOWN:
-			# 		if event.key == pygame.K_LEFT:
-			# 			car_x_change = -5
-			# 		elif event.key == pygame.K_RIGHT:
-			# 			car_x_change = 5
-			# 	#up button pressed
-			# 		'''
-			# 		elif event.key == pygame.K_UP:
-			# 			self.personSpeed = 2
-			# 			self.carSpeed = 3
-			# 			self.bgSpeed = 6
-			# 		'''
-			# 	#left or right buttons released			
-			# 	if event.type == pygame.KEYUP:
-			# 		if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-			# 			car_x_change = 0
-				
-			# self.car_x += car_x_change
-
+			exitGame = self.gameController()			
 			#check if crash occurs
 			self.checkCrash(self.car_x, self.car_y)
 			
