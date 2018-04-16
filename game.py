@@ -1,7 +1,6 @@
 import pygame
 import time
 import random
-from gameobject import *
 
 black = (0,0,0)
 white = (255,255,255)
@@ -33,8 +32,9 @@ class CarGame():
 		self.greenSign = pygame.image.load('Images/red_sign.png')
 		self.person = pygame.image.load('Images/person.png')
 		#speed of car and backgroung
-		self.carSpeed = 3
-		self.bgSpeed = 6
+		self.personSpeed = 0
+		self.carSpeed = 0
+		self.bgSpeed = 0
 		#
 		self.gameObjects = []
 		self.isRedSign = False
@@ -46,6 +46,9 @@ class CarGame():
 		self.bg_Img1_y = 0;
 		self.bg_Img2_x = self.bg_Img1_x
 		self.bg_Img2_y = -self.display_height
+		self.car_x = -1
+		self.car_y = -1
+		self.car_x_change = 0
 
 	def introWindow(self):
 		flag = True
@@ -110,40 +113,46 @@ class CarGame():
 	def gameLoop(self):
 
 		#initial position of the main car
-		car_x = (self.display_width / 2) - (self.object_width / 2)
-		car_y = self.display_height - self.object_height
-		car_x_change = 0
+		self.car_x = (self.display_width / 2) - (self.object_width / 2)
+		self.car_y = self.display_height - self.object_height
+		
 		self.addObject()
 		exitGame = False
-
+		self.car_x_change = 0		
 		while not exitGame:
-			#to move objects, and stop when meeting a red traffic sign
-			move = False
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					gameExit = True
-					pygame.quit()
-					quit()
+			exitGame = self.gameController()
+			# for event in pygame.event.get():
+			# 	if event.type == pygame.QUIT:
+			# 		pygame.quit()
+			# 		quit()
 
-				if event.type == pygame.KEYDOWN:
-					if event.key == pygame.K_LEFT:
-						car_x_change = -5
-					elif event.key == pygame.K_RIGHT:
-						car_x_change = 5
-
-				if event.type == pygame.KEYUP:
-					if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-						car_x_change = 0
-
-			car_x += car_x_change
+			# 	#left or right buttons prssed
+			# 	if event.type == pygame.KEYDOWN:
+			# 		if event.key == pygame.K_LEFT:
+			# 			car_x_change = -5
+			# 		elif event.key == pygame.K_RIGHT:
+			# 			car_x_change = 5
+			# 	#up button pressed
+			# 		'''
+			# 		elif event.key == pygame.K_UP:
+			# 			self.personSpeed = 2
+			# 			self.carSpeed = 3
+			# 			self.bgSpeed = 6
+			# 		'''
+			# 	#left or right buttons released			
+			# 	if event.type == pygame.KEYUP:
+			# 		if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+			# 			car_x_change = 0
+				
+			# self.car_x += car_x_change
 
 			#check if crash occurs
-			self.checkCrash(car_x, car_y)
+			self.checkCrash(self.car_x, self.car_y)
 			
 			self.screen.fill(green)
 			self.screen.blit(self.road, (self.bg_Img1_x, self.bg_Img1_y))
 			self.screen.blit(self.road, (self.bg_Img2_x, self.bg_Img2_y))
-			self.screen.blit(self.mainCar, (car_x, car_y))
+			self.screen.blit(self.mainCar, (self.car_x, self.car_y))
 			self.screen.blit(self.curObjectImage, (self.objectX, self.objectY))
 
 			self.moveObjects()
@@ -152,6 +161,36 @@ class CarGame():
 
 			pygame.display.update() # update the screen
 			self.clock.tick(60) # frame per sec
+
+
+	def gameController(self):		
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				quit()
+
+			#left or right buttons prssed
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_LEFT:
+					self.car_x_change = -5
+				elif event.key == pygame.K_RIGHT:
+					self.car_x_change = 5
+			#up button pressed
+				elif event.key == pygame.K_UP:
+					self.personSpeed = 2
+					self.carSpeed = 3
+					self.bgSpeed = 6
+			#left or right buttons released			
+			if event.type == pygame.KEYUP:
+				if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+					self.car_x_change = 0
+			#UP button released
+				elif event.key == pygame.K_UP:
+					self.personSpeed = 0
+					self.carSpeed = -3
+					self.bgSpeed = 0
+		self.car_x += self.car_x_change
+		
 
 	# add another car, a person or a traffic sign
 	def addObject(self):
@@ -173,26 +212,25 @@ class CarGame():
 		self.objectY = -200
 	
 	def moveObjects(self):
-		#if the sign is red, stop
-		if not self.isRedSign:
-			self.bg_Img1_y += self.bgSpeed
-			self.bg_Img2_y += self.bgSpeed
+		
+		self.bg_Img1_y += self.bgSpeed
+		self.bg_Img2_y += self.bgSpeed
 
+		#move the background
 		if self.bg_Img1_y >= self.display_height:
 			self.bg_Img1_y = -self.display_height
 
 		if self.bg_Img2_y >= self.display_height:
 			self.bg_Img2_y = -self.display_height
 
-		#################
 		#move objects
 		if self.curObject == 0: #car
-			self.objectY += 3
+			self.objectY += self.carSpeed
 		elif self.curObject == 1: #sign
 			if not self.isRedSign:
 				self.objectY += self.bgSpeed
 		else: #person
-			self.objectX += 2
+			self.objectX += self.personSpeed
 
 	def checkCrash(self, car_x, car_y):
 		road_start_x = (self.display_width/2) - 112
