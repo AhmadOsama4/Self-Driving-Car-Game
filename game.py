@@ -235,8 +235,7 @@ class CarGame():
 		self.counter = 0
 		self.objectY = -200
 	
-	def moveObjects(self):
-		
+	def moveObjects(self):		
 		self.bg_Img1_y += self.bgSpeed
 		self.bg_Img2_y += self.bgSpeed
 
