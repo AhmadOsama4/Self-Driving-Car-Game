@@ -24,7 +24,7 @@ class CarController(object):
 		self.carY = car_y
 
 	#template matching for the car
-	def car_match(self, img, matchvalue = 4):
+	def car_match(self, img, matchvalue = 0):
 		trows, tcols = self.carTemplate.shape[:2]
 		img2 = img.copy()
 
