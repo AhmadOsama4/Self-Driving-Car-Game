@@ -211,8 +211,34 @@ class CarGame():
 			self.car_x_change = 0
 			
 		self.car_x += self.car_x_change
-		
+		'''
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				quit()
 
+			#left or right buttons prssed
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_LEFT:
+					self.car_x_change = -5
+				elif event.key == pygame.K_RIGHT:
+					self.car_x_change = 5
+			#up button pressed
+				elif event.key == pygame.K_UP:
+					self.personSpeed = 2
+					self.carSpeed = 3
+					self.bgSpeed = 6
+			#left or right buttons released			
+			if event.type == pygame.KEYUP:
+				if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+					self.car_x_change = 0
+			#UP button released
+				elif event.key == pygame.K_UP:
+					self.personSpeed = 0
+					self.carSpeed = -3
+					self.bgSpeed = 0
+		self.car_x += self.car_x_change
+		'''
 	# add another car, a person or a traffic sign
 	def addObject(self):
 		#random object
