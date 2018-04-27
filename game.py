@@ -121,55 +121,6 @@ class CarGame():
 			self.clock.tick(50)
 
 	def gameLoop(self):
-		def car_match(matchvalue, img):
-			template = cv2.imread("Images/rt.png",0)
-			trows, tcols = template.shape[:2]
-			img2 = img.copy()
-
-			result = cv2.matchTemplate(img, template, matchvalue)
-
-			cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
-
-			mini, maxi, (mx, my), (Mx, My) = cv2.minMaxLoc(
-				result)  # We find minimum and maximum value locations in result
-
-			if matchvalue in [0, 1]:  # For SQDIFF and SQDIFF_NORMED, the best matches are lower values.
-				MPx, MPy = mx, my
-			else:  # Other cases, best matches are higher values.
-				MPx, MPy = Mx, My
-
-			# Normed methods give better results, ie matchvalue = [1,3,5], others sometimes shows errors
-			cv2.rectangle(img2, (MPx, MPy), (MPx + tcols, MPy + trows), (0, 0, 255), 2)
-
-			cv2.imshow('input', img2)
-			cv2.imshow('output', result)
-			cv2.waitKey(1)
-		'''
-		def traffic_match(matchvalue,img):
-			template=cv2.imread("Images/r.png",0)
-			print(template)
-			trows, tcols = template.shape[:2]
-			img2 = img.copy()
-
-			result = cv2.matchTemplate(img, template, matchvalue)
-
-			cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
-
-			mini, maxi, (mx, my), (Mx, My) = cv2.minMaxLoc(
-				result)  # We find minimum and maximum value locations in result
-
-			if matchvalue in [0, 1]:  # For SQDIFF and SQDIFF_NORMED, the best matches are lower values.
-				MPx, MPy = mx, my
-			else:  # Other cases, best matches are higher values.
-				MPx, MPy = Mx, My
-
-			# Normed methods give better results, ie matchvalue = [1,3,5], others sometimes shows errors
-			cv2.rectangle(img2, (MPx, MPy), (MPx + tcols, MPy + trows), (0, 0, 255), 2)
-
-			cv2.imshow('input', img2)
-			cv2.imshow('output', result)
-
-		'''
 		#initial position of the main car
 		self.car_x = (self.display_width / 2) - (self.object_width / 2)
 		self.car_y = self.display_height - self.object_height
