@@ -3,7 +3,7 @@ import numpy as np
 from directions import Direction
 
 class CarController(object):
-	def __init__(self, car_width, car_height, car_x, car_y, road_x, road_start_x, road_end_x):
+	def __init__(self, car_width, car_height, car_x, car_y, road_start_x, road_end_x):
 		self.carTemplate = cv2.imread("Images/rt.png",0)
 		self.signTemplate = cv2.imread("r.png", 0)
 		self.carWidth = car_width
