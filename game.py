@@ -24,7 +24,7 @@ class CarGame():
 		pygame.display.set_caption("Self Driving Car Game")
 		self.clock  = pygame.time.Clock()
 		#load images
-		self.road = pygame.image.load('Images/vv.jpg')
+		self.road = pygame.image.load('Images/road.jpg')
 		self.mainCar = pygame.image.load('Images/our_car.png')
 		self.otherCar = pygame.image.load('Images/other_car.png')
 		self.crashImg = pygame.image.load('Images/crash.png')
