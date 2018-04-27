@@ -1,6 +1,8 @@
 import pygame
 import time
 import random
+import cv2
+import numpy as np
 
 black = (0,0,0)
 white = (255,255,255)
@@ -22,7 +24,7 @@ class CarGame():
 		pygame.display.set_caption("Self Driving Car Game")
 		self.clock  = pygame.time.Clock()
 		#load images
-		self.road = pygame.image.load('Images/road.jpg')
+		self.road = pygame.image.load('Images/vv.jpg')
 		self.mainCar = pygame.image.load('Images/our_car.png')
 		self.otherCar = pygame.image.load('Images/other_car.png')
 		self.crashImg = pygame.image.load('Images/crash.png')
@@ -117,6 +119,55 @@ class CarGame():
 			self.clock.tick(50)
 
 	def gameLoop(self):
+		def car_match(matchvalue, img):
+			template=cv2.imread("Images/rt.png",0)
+			trows, tcols = template.shape[:2]
+			img2 = img.copy()
+
+			result = cv2.matchTemplate(img, template, matchvalue)
+
+			cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
+
+			mini, maxi, (mx, my), (Mx, My) = cv2.minMaxLoc(
+				result)  # We find minimum and maximum value locations in result
+
+			if matchvalue in [0, 1]:  # For SQDIFF and SQDIFF_NORMED, the best matches are lower values.
+				MPx, MPy = mx, my
+			else:  # Other cases, best matches are higher values.
+				MPx, MPy = Mx, My
+
+			# Normed methods give better results, ie matchvalue = [1,3,5], others sometimes shows errors
+			cv2.rectangle(img2, (MPx, MPy), (MPx + tcols, MPy + trows), (0, 0, 255), 2)
+
+			cv2.imshow('input', img2)
+			cv2.imshow('output', result)
+
+		def traffic_match(matchvalue,img):
+			template=cv2.imread("Images/r.png",0)
+			print(template)
+			trows, tcols = template.shape[:2]
+			img2 = img.copy()
+
+			result = cv2.matchTemplate(img, template, matchvalue)
+
+			cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
+
+			mini, maxi, (mx, my), (Mx, My) = cv2.minMaxLoc(
+				result)  # We find minimum and maximum value locations in result
+
+			if matchvalue in [0, 1]:  # For SQDIFF and SQDIFF_NORMED, the best matches are lower values.
+				MPx, MPy = mx, my
+			else:  # Other cases, best matches are higher values.
+				MPx, MPy = Mx, My
+
+			# Normed methods give better results, ie matchvalue = [1,3,5], others sometimes shows errors
+			cv2.rectangle(img2, (MPx, MPy), (MPx + tcols, MPy + trows), (0, 0, 255), 2)
+
+			cv2.imshow('input', img2)
+			cv2.imshow('output', result)
+
+
+
 
 		#initial position of the main car
 		self.car_x = (self.display_width / 2) - (self.object_width / 2)
@@ -150,7 +201,22 @@ class CarGame():
 				elif self.counter >= 240:
 					self.isRedSign = False
 					self.curObjectImage = self.greenSign
+			
+			pg_img = pygame.display.get_surface()
 
+			color_image = pygame.surfarray.array3d(pg_img)
+
+			color_image = cv2.transpose(color_image)
+			color_image = cv2.cvtColor(color_image, cv2.COLOR_RGB2BGR)
+			g = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
+
+			# --- display CV2 image ---
+			car_match(4,g)
+			traffic_match(4,g)
+
+			cv2.imshow('Color', color_image)
+			#cv2.waitKey(0)
+			#cv2.destroyAllWindows()
 
 			pygame.display.update() # update the screen
 			self.clock.tick(60) # frame per sec
