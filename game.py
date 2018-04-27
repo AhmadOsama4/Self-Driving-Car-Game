@@ -3,6 +3,8 @@ import time
 import random
 import cv2
 import numpy as np
+from directions import Direction
+
 
 black = (0,0,0)
 white = (255,255,255)
@@ -120,7 +122,7 @@ class CarGame():
 
 	def gameLoop(self):
 		def car_match(matchvalue, img):
-			template=cv2.imread("Images/rt.png",0)
+			template = cv2.imread("Images/rt.png",0)
 			trows, tcols = template.shape[:2]
 			img2 = img.copy()
 
@@ -141,7 +143,8 @@ class CarGame():
 
 			cv2.imshow('input', img2)
 			cv2.imshow('output', result)
-
+			cv2.waitKey(1)
+		'''
 		def traffic_match(matchvalue,img):
 			template=cv2.imread("Images/r.png",0)
 			print(template)
@@ -166,9 +169,7 @@ class CarGame():
 			cv2.imshow('input', img2)
 			cv2.imshow('output', result)
 
-
-
-
+		'''
 		#initial position of the main car
 		self.car_x = (self.display_width / 2) - (self.object_width / 2)
 		self.car_y = self.display_height - self.object_height
@@ -202,8 +203,8 @@ class CarGame():
 					self.isRedSign = False
 					self.curObjectImage = self.greenSign
 			
+			# get the image of the game
 			pg_img = pygame.display.get_surface()
-
 			color_image = pygame.surfarray.array3d(pg_img)
 
 			color_image = cv2.transpose(color_image)
@@ -211,13 +212,12 @@ class CarGame():
 			g = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
 
 			# --- display CV2 image ---
-			car_match(4,g)
-			traffic_match(4,g)
+			#car_match(4, g)
+			# traffic_match(4,g)
 
-			cv2.imshow('Color', color_image)
-			#cv2.waitKey(0)
+			# cv2.imshow('Color', color_image)
+			# cv2.waitKey(1)
 			#cv2.destroyAllWindows()
-
 			pygame.display.update() # update the screen
 			self.clock.tick(60) # frame per sec
 
