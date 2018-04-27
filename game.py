@@ -3,6 +3,7 @@ import time
 import random
 import cv2
 import numpy as np
+from controller import CarController
 from directions import Direction
 
 
@@ -59,6 +60,10 @@ class CarGame():
 		self.car_y = -1
 		self.car_x_change = 0
 		self.counter = 1
+		#Controller class
+		road_start_x =  (self.display_width / 2) - 112
+		road_end_x = (self.display_width / 2) + 112
+		self.Controller = CarController(self.object_width, self.object_height, self.car_x, self.car_y, road_start_x, road_end_x)
 
 	def introWindow(self):
 		flag = True
@@ -179,26 +184,32 @@ class CarGame():
 				pygame.quit()
 				quit()
 
-			#left or right buttons prssed
-			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_LEFT:
-					self.car_x_change = -5
-				elif event.key == pygame.K_RIGHT:
-					self.car_x_change = 5
-			#up button pressed
-				elif event.key == pygame.K_UP:
-					self.personSpeed = 2
-					self.carSpeed = 3
-					self.bgSpeed = 6
-			#left or right buttons released			
-			if event.type == pygame.KEYUP:
-				if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-					self.car_x_change = 0
-			#UP button released
-				elif event.key == pygame.K_UP:
-					self.personSpeed = 0
-					self.carSpeed = -3
-					self.bgSpeed = 0
+		#Get the image of the game
+		pg_img = pygame.display.get_surface()
+		color_image = pygame.surfarray.array3d(pg_img)
+		color_image = cv2.transpose(color_image)
+		color_image = cv2.cvtColor(color_image, cv2.COLOR_RGB2BGR)
+		g = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
+
+		direction = self.CarController.getDirection(g, self.car_x, self.car_y)
+
+		#move forward by default
+		self.personSpeed = 2
+		self.carSpeed = 3
+		self.bgSpeed = 6
+
+		if direction == Direction.LEFT:
+			self.car_x_change = -5
+		elif direction == Direction.RIGHT:
+			self.car_x_change = 5		
+		elif direction == Direction.FORWARD:
+			self.car_x_change = 0
+		elif direction == Direction.STOP:
+			self.personSpeed = 0
+			self.carSpeed = -3
+			self.bgSpeed = 0
+			self.car_x_change = 0
+			
 		self.car_x += self.car_x_change
 		
 
