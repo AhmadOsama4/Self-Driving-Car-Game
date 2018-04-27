@@ -196,6 +196,7 @@ class CarGame():
 			self.car_x_change = 0
 			
 		self.car_x += self.car_x_change
+
 		'''
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
