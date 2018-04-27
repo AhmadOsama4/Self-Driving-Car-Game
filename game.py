@@ -159,21 +159,6 @@ class CarGame():
 					self.isRedSign = False
 					self.curObjectImage = self.greenSign
 			
-			# get the image of the game
-			pg_img = pygame.display.get_surface()
-			color_image = pygame.surfarray.array3d(pg_img)
-
-			color_image = cv2.transpose(color_image)
-			color_image = cv2.cvtColor(color_image, cv2.COLOR_RGB2BGR)
-			g = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
-
-			# --- display CV2 image ---
-			#car_match(4, g)
-			# traffic_match(4,g)
-
-			# cv2.imshow('Color', color_image)
-			# cv2.waitKey(1)
-			#cv2.destroyAllWindows()
 			pygame.display.update() # update the screen
 			self.clock.tick(60) # frame per sec
 

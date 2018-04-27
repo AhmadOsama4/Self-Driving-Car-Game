@@ -24,7 +24,7 @@ class CarController(object):
 		self.carY = car_y
 
 	#template matching for the car
-	def car_match(self, matchvalue = 4, img):
+	def car_match(self, img, matchvalue = 4):
 		trows, tcols = self.carTemplate.shape[:2]
 		img2 = img.copy()
 
@@ -49,7 +49,7 @@ class CarController(object):
 		return (MPx, MPy, MPx + tcols, MPy + trows)
 
 	#template matching for the sign
-	def traffic_match(self, matchvalue = 4, img):
+	def traffic_match(self, img, matchvalue = 4):
 		trows, tcols = self.signTemplate.shape[:2]
 		img2 = img.copy()
 
