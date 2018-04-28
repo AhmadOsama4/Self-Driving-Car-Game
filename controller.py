@@ -27,16 +27,17 @@ class CarController(object):
 	#template matching for the car
 	def car_match(self, img, matchvalue = 4):
 		trows, tcols = self.carTemplate.shape[:2]
-		img2 = img.copy()
+		# img2 = img.copy()
 
 		result = cv2.matchTemplate(img, self.carTemplate, matchvalue)
-		loc = np.where(result >= 0.8)
-		# if no match found return None
-		if loc[0].size == 0:
-			return None
 
-		cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
+		# cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
 
+		# loc = np.where(result >= 0.8)
+		# # if no match found return None
+		# if loc[0].size == 0:
+		# 	return None
+		
 		mini, maxi, (mx, my), (Mx, My) = cv2.minMaxLoc(
 			result)  # We find minimum and maximum value locations in result
 
@@ -59,12 +60,13 @@ class CarController(object):
 		img2 = img.copy()
 
 		result = cv2.matchTemplate(img, self.signTemplate, matchvalue)
+
+		cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
+
 		loc = np.where(result >= 0.8)
 		# if no match found return None
 		if loc[0].size == 0:
 			return None
-
-		cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
 
 		mini, maxi, (mx, my), (Mx, My) = cv2.minMaxLoc(
 			result)  # We find minimum and maximum value locations in result

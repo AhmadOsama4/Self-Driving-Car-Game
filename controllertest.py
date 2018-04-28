@@ -33,8 +33,9 @@ if tmp is not None:
 else:
 	print('Correct: Output is None')
 
-######################################################################
-##################   Test Traffic Sign  ##############################
+#####################################################################
+##################   Test Traffic Sign  #############################
+'''
 tmp = Controller.traffic_match(gray_green_sign)
 if tmp is not None:
 	a, b, c, d = tmp
@@ -53,7 +54,7 @@ if tmp is not None:
 	print('Sign detects car => Incorrect should give None')
 else:
 	print('Correct: Output is None')
-
+'''
 ##############
 cv2.waitKey(0)
 cv2.destroyAllWindows()
