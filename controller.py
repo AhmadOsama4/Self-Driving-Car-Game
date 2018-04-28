@@ -4,8 +4,9 @@ from directions import Direction
 
 class CarController(object):
 	def __init__(self, car_width, car_height, car_x, car_y, road_start_x, road_end_x):
-		self.carTemplate = cv2.imread("Images/rt.png",0)
-		self.signTemplate = cv2.imread("r.png", 0)
+		self.carTemplate = cv2.imread("Images/other_car.png",0)
+		self.signTemplate = cv2.imread("Images/red_sign.png", 0)
+		self.signTemplate = cv2.resize(self.signTemplate, (50, 100))
 		self.carWidth = car_width
 		self.carHeight = car_height
 		#road start/end
@@ -68,8 +69,8 @@ class CarController(object):
 		# Normed methods give better results, ie matchvalue = [1,3,5], others sometimes shows errors
 		#cv2.rectangle(img2, (MPx, MPy), (MPx + tcols, MPy + trows), (0, 0, 255), 2)
 
-		cv2.imshow('input', img2)
-		cv2.imshow('output', result)
+		# cv2.imshow('input', img2)
+		# cv2.imshow('output', result)
 
 		return (MPx, MPy, MPx + tcols, MPy + trows)
 

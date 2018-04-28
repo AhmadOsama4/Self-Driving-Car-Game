@@ -11,12 +11,20 @@ car_img = cv2.imread('TestingImages/image_car.png')
 gray_car_img = cv2.cvtColor(car_img, cv2.COLOR_BGR2GRAY)
 #Sign Image
 green_sign  = cv2.imread('TestingImages/green_sign.png')
-
+gray_green_sign = cv2.cvtColor(green_sign, cv2.COLOR_BGR2GRAY)
 #Test the car
-a, b, c, d = Controller.car_match(gray_car_img)
-cv2.rectangle(car_img, (a, b), (c, d), (0, 0, 255), 2)
+tmp = Controller.car_match(gray_car_img)
+if tmp is not None:
+	a, b, c, d = tmp
+	cv2.rectangle(car_img, (a, b), (c, d), (0, 0, 255), 2)
+	cv2.imshow('Car', car_img)
+#Test Traffic Sign
+tmp = Controller.traffic_match(gray_green_sign)
+if tmp is not None:
+	a, b, c, d = tmp
+	cv2.rectangle(green_sign, (a, b), (c, d), (0, 0, 255), 2)
+	cv2.imshow('Sign', green_sign)
 
-cv2.imshow('Car', car_img)
-# cv2.imshow('Sign', green_sign)
+##############
 cv2.waitKey(0)
 cv2.destroyAllWindows()
