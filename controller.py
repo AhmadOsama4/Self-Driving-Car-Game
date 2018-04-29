@@ -4,15 +4,11 @@ from directions import Direction
 
 class CarController(object):
 	def __init__(self, car_width, car_height, car_x, car_y, road_start_x, road_end_x):
-<<<<<<< HEAD
-		self.carTemplate = cv2.imread("Images/rt.png",0)
-		self.signTemplate = cv2.imread("r.png", 0)
-=======
 		self.carTemplate = cv2.imread("Images/other_car.png")
 		self.carTemplate = cv2.cvtColor(self.carTemplate, cv2.COLOR_BGR2GRAY)
 		self.signTemplate = cv2.imread("Images/red_sign.png", 0)
 		self.signTemplate = cv2.resize(self.signTemplate, (50, 100))
->>>>>>> Controller
+
 		self.carWidth = car_width
 		self.carHeight = car_height
 		self.imgHeight = 600
