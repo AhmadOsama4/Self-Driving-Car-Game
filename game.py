@@ -210,7 +210,7 @@ class CarGame():
 		color_image = cv2.cvtColor(color_image, cv2.COLOR_RGB2BGR)
 		g = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
 
-		direction = self.CarController.getDirection(g, self.car_x, self.car_y)
+		direction = self.Controller.getDirection(g, self.car_x, self.car_y)
 
 		#move forward by default
 		self.personSpeed = 2
