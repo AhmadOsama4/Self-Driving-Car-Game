@@ -52,7 +52,7 @@ class CarController(object):
 			MPx, MPy = Mx, My
 
 		# Normed methods give better results, ie matchvalue = [1,3,5], others sometimes shows errors
-		cv2.rectangle(img2, (MPx, MPy), (MPx + tcols, MPy + trows), (0, 0, 255), 2)
+		# cv2.rectangle(img2, (MPx, MPy), (MPx + tcols, MPy + trows), (0, 0, 255), 2)
 
 		# cv2.imshow('Car Bounding Box', img2)
 		# cv2.waitKey(10)
@@ -113,7 +113,7 @@ class CarController(object):
 		if ret is not None:
 			x_start, y_start, x_end, y_end = ret
 			x_start += self.roadStart
-			x_end += self.roadEnd
+			x_end += self.roadStart
 
 			print('Our Car:', self.carX, self.carX + self.carWidth)
 			print('Other Car:', x_start, x_end)
