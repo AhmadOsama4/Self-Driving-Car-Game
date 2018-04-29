@@ -4,11 +4,14 @@ from directions import Direction
 
 class CarController(object):
 	def __init__(self, car_width, car_height, car_x, car_y, road_start_x, road_end_x):
-		self.carTemplate = cv2.imread("Images/other_car.png",0)
+		self.carTemplate = cv2.imread("Images/other_car.png")
+		self.carTemplate = cv2.cvtColor(self.carTemplate, cv2.COLOR_BGR2GRAY)
 		self.signTemplate = cv2.imread("Images/red_sign.png", 0)
 		self.signTemplate = cv2.resize(self.signTemplate, (50, 100))
 		self.carWidth = car_width
 		self.carHeight = car_height
+		self.imgHeight = 600
+		self.imgWidth = 800
 		#road start/end
 		self.roadStart = road_start_x
 		self.roadEnd = road_end_x
@@ -25,23 +28,23 @@ class CarController(object):
 		self.carY = car_y
 
 	#template matching for the car
-	def car_match(self, img, matchvalue = 4):
+	def car_match(self, img, matchvalue = cv2.TM_CCOEFF_NORMED):
 		trows, tcols = self.carTemplate.shape[:2]
 		# img2 = img.copy()
 
 		result = cv2.matchTemplate(img, self.carTemplate, matchvalue)
 
-		# cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
+		#cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
 
-		# loc = np.where(result >= 0.8)
-		# # if no match found return None
-		# if loc[0].size == 0:
-		# 	return None
+		loc = np.where(result >= 0.8)
+		# if no match found return None
+		if loc[0].size == 0:
+			return None
 		
 		mini, maxi, (mx, my), (Mx, My) = cv2.minMaxLoc(
 			result)  # We find minimum and maximum value locations in result
 
-		if matchvalue in [0, 1]:  # For SQDIFF and SQDIFF_NORMED, the best matches are lower values.
+		if matchvalue in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:  # For SQDIFF and SQDIFF_NORMED, the best matches are lower values.
 			MPx, MPy = mx, my
 		else:  # Other cases, best matches are higher values.
 			MPx, MPy = Mx, My
@@ -55,13 +58,13 @@ class CarController(object):
 		return (MPx, MPy, MPx + tcols, MPy + trows)
 
 	#template matching for the sign
-	def traffic_match(self, img, matchvalue = 4):
+	def traffic_match(self, img, matchvalue = cv2.TM_CCOEFF_NORMED):
 		trows, tcols = self.signTemplate.shape[:2]
 		img2 = img.copy()
 
 		result = cv2.matchTemplate(img, self.signTemplate, matchvalue)
 
-		cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
+		#cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
 
 		loc = np.where(result >= 0.8)
 		# if no match found return None
@@ -71,7 +74,7 @@ class CarController(object):
 		mini, maxi, (mx, my), (Mx, My) = cv2.minMaxLoc(
 			result)  # We find minimum and maximum value locations in result
 
-		if matchvalue in [0, 1]:  # For SQDIFF and SQDIFF_NORMED, the best matches are lower values.
+		if matchvalue in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:  # For SQDIFF and SQDIFF_NORMED, the best matches are lower values.
 			MPx, MPy = mx, my
 		else:  # Other cases, best matches are higher values.
 			MPx, MPy = Mx, My
@@ -97,8 +100,8 @@ class CarController(object):
 
 			return Direction.FORWARD
 
-		ret = self.car_match(image)
 		# matched a car
+		ret = self.car_match(image[self.roadStart:self.roadEnd, 0:self.imgHeight - 100])
 		if ret is not None:
 			x_start, y_start, x_end, y_end = ret
 			#Continue forward: no crash will occur
