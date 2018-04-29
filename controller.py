@@ -32,7 +32,7 @@ class CarController(object):
 
 	def car_match(self, img, matchvalue = cv2.TM_CCOEFF_NORMED):
 		trows, tcols = self.carTemplate.shape[:2]
-		img2 = img.copy()
+		# img2 = img.copy()
 
 		result = cv2.matchTemplate(img, self.carTemplate, matchvalue)
 
@@ -54,8 +54,8 @@ class CarController(object):
 		# Normed methods give better results, ie matchvalue = [1,3,5], others sometimes shows errors
 		cv2.rectangle(img2, (MPx, MPy), (MPx + tcols, MPy + trows), (0, 0, 255), 2)
 
-		cv2.imshow('Car Bounding Box', img2)
-		cv2.waitKey(10)
+		# cv2.imshow('Car Bounding Box', img2)
+		# cv2.waitKey(10)
 		#cv2.imshow('output', result)
 
 		return (MPx, MPy, MPx + tcols, MPy + trows)
@@ -106,7 +106,7 @@ class CarController(object):
 
 		# matched a car
 		tmpImg = image[0:int(self.imgHeight - 100), int(self.roadStart):int(self.roadEnd)]
-		cv2.imshow('Extracted', tmpImg)
+		# cv2.imshow('Extracted', tmpImg)
 		ret = self.car_match(tmpImg)
 		cv2.waitKey(2)
 
