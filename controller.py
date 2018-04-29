@@ -91,8 +91,8 @@ class CarController(object):
 	def getDirection(self, image, car_x, car_y):
 		self.setCarPosition(car_x, car_y)
 
-		ret = self.traffic_match(image)
 		# matched a traffic sign
+		ret = self.traffic_match(image)
 		if ret is not None:
 			#check if sign is red or yellow
 			if False: #TODO: check sign color
