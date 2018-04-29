@@ -164,6 +164,40 @@ class CarGame():
 
 
 	def gameController(self):		
+		'''
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				quit()
+
+		#Get the image of the game
+		pg_img = pygame.display.get_surface()
+		color_image = pygame.surfarray.array3d(pg_img)
+		color_image = cv2.transpose(color_image)
+		color_image = cv2.cvtColor(color_image, cv2.COLOR_RGB2BGR)
+		g = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
+
+		direction = self.CarController.getDirection(g, self.car_x, self.car_y)
+
+		#move forward by default
+		self.personSpeed = 2
+		self.carSpeed = 3
+		self.bgSpeed = 6
+
+		if direction == Direction.LEFT:
+			self.car_x_change = -5
+		elif direction == Direction.RIGHT:
+			self.car_x_change = 5		
+		elif direction == Direction.FORWARD:
+			self.car_x_change = 0
+		elif direction == Direction.STOP:
+			self.personSpeed = 0
+			self.carSpeed = -3
+			self.bgSpeed = 0
+			self.car_x_change = 0
+			
+		self.car_x += self.
+		'''
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				pygame.quit()
@@ -247,7 +281,8 @@ class CarGame():
 		self.counter = 0
 		self.objectY = -200
 	
-	def moveObjects(self):		
+
+	def moveObjects(self):
 		self.bg_Img1_y += self.bgSpeed
 		self.bg_Img2_y += self.bgSpeed
 
