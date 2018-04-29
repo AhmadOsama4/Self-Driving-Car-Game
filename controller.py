@@ -5,7 +5,6 @@ from directions import Direction
 class CarController(object):
 	def __init__(self, car_width, car_height, car_x, car_y, road_start_x, road_end_x):
 		self.carTemplate = cv2.imread("Images/other_car.png", 0)
-		cv2.imshow('Template', self.carTemplate)
 		self.signTemplate = cv2.imread("Images/red_sign.png", 0)
 		self.signTemplate = cv2.resize(self.signTemplate, (50, 100))
 
@@ -38,7 +37,7 @@ class CarController(object):
 
 		#cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
 
-		loc = np.where(result >= 0.5)
+		loc = np.where(result >= 0.45)
 		# if no match found return None
 		if loc[0].size == 0:
 			return None
