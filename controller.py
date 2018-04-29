@@ -95,18 +95,26 @@ class CarController(object):
 		self.setCarPosition(car_x, car_y)
 
 		# matched a traffic sign
-		ret = self.traffic_match(image)
-		if ret is not None:
-			#check if sign is red or yellow
-			if False: #TODO: check sign color
-				return Direction.STOP
+		# ret = self.traffic_match(image)
+		# if ret is not None:
+		# 	#check if sign is red or yellow
+		# 	if False: #TODO: check sign color
+		# 		return Direction.STOP
 
-			return Direction.FORWARD
+		# 	return Direction.FORWARD
 
 		# matched a car
-		ret = self.car_match(image[self.roadStart:self.roadEnd, 0:self.imgHeight - 100])
+		tmpImg = image[int(self.roadStart):int(self.roadEnd), 0:int(self.imgHeight - 100)]
+		cv2.imshow('Extracted', tmpImg)
+		ret = self.car_match(tmpImg)
+		cv2.waitKey(2)
 		if ret is not None:
 			x_start, y_start, x_end, y_end = ret
+			x_start += self.roadStart
+			x_end += self.roadEnd
+
+			print('Our Car:', self.carX, self.carX + self.carWidth)
+			print('Other Car:', self.x_start, self.x_end)
 			#Continue forward: no crash will occur
 			if (self.carX > x_end) or (self.carX + self.carWidth < x_start):
 				return Direction.FORWARD
@@ -116,7 +124,8 @@ class CarController(object):
 				return Direction.RIGHT 
 
 			return Direction.LEFT
-
+		else:
+			print('Car Not Found')
 		#if no directions chosen continue forward
 		return Direction.FORWARD
 
