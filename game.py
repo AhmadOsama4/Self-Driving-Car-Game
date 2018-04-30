@@ -176,7 +176,16 @@ class CarGame():
 		color_image = cv2.cvtColor(color_image, cv2.COLOR_RGB2BGR)
 		g = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
 
-		direction = self.Controller.getDirection(g, self.car_x, self.car_y)
+		if self.curObject == 0:
+			direction = self.Controller.getDirection(g, self.car_x, self.car_y)
+		elif self.curObject == 1:
+			if self.counter < 100:
+				direction = Direction.FORWARD
+			elif self.counter < 240:
+				direction = Direction.STOP
+			else:
+				direction = Direction.FORWARD
+
 
 		#move forward by default
 		self.personSpeed = 2
@@ -201,7 +210,7 @@ class CarGame():
 	def addObject(self):
 		#random object
 		self.curObject = random.randrange(1000) % 2
-		self.curObject = 0
+		#self.curObject = 0
 		self.isRedSign = False
 		if self.curObject == 0: # add a car
 			road_start_x =  (self.display_width/2)-112
