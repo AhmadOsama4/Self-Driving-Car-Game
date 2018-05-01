@@ -3,9 +3,6 @@ import time
 import random
 import cv2
 import numpy as np
-from controller import CarController
-from directions import Direction
-
 
 black = (0,0,0)
 white = (255,255,255)
@@ -27,7 +24,7 @@ class CarGame():
 		pygame.display.set_caption("Self Driving Car Game")
 		self.clock  = pygame.time.Clock()
 		#load images
-		self.road = pygame.image.load('Images/road.jpg')
+		self.road = pygame.image.load('Images/vv.jpg')
 		self.mainCar = pygame.image.load('Images/our_car.png')
 		self.otherCar = pygame.image.load('Images/other_car.png')
 		self.crashImg = pygame.image.load('Images/crash.png')
@@ -60,10 +57,6 @@ class CarGame():
 		self.car_y = -1
 		self.car_x_change = 0
 		self.counter = 1
-		#Controller class
-		road_start_x =  (self.display_width / 2) - 112
-		road_end_x = (self.display_width / 2) + 112
-		self.Controller = CarController(self.object_width, self.object_height, self.car_x, self.car_y, road_start_x, road_end_x)
 
 	def introWindow(self):
 		flag = True
@@ -126,6 +119,56 @@ class CarGame():
 			self.clock.tick(50)
 
 	def gameLoop(self):
+		def car_match(matchvalue,img):
+			template=cv2.imread("Images/rt.png",0)
+			trows, tcols = template.shape[:2]
+			img2 = img.copy()
+
+			result = cv2.matchTemplate(img, template, matchvalue)
+
+			cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
+
+			mini, maxi, (mx, my), (Mx, My) = cv2.minMaxLoc(
+				result)  # We find minimum and maximum value locations in result
+
+			if matchvalue in [0, 1]:  # For SQDIFF and SQDIFF_NORMED, the best matches are lower values.
+				MPx, MPy = mx, my
+			else:  # Other cases, best matches are higher values.
+				MPx, MPy = Mx, My
+
+			# Normed methods give better results, ie matchvalue = [1,3,5], others sometimes shows errors
+			cv2.rectangle(img2, (MPx, MPy), (MPx + tcols, MPy + trows), (0, 0, 255), 2)
+
+			cv2.imshow('input', img2)
+			cv2.imshow('output', result)
+
+		def traffic_match(matchvalue,img):
+			template=cv2.imread("Images/r.png",0)
+			print(template)
+			trows, tcols = template.shape[:2]
+			img2 = img.copy()
+
+			result = cv2.matchTemplate(img, template, matchvalue)
+
+			cv2.normalize(result, result, 0, 255, cv2.NORM_MINMAX)
+
+			mini, maxi, (mx, my), (Mx, My) = cv2.minMaxLoc(
+				result)  # We find minimum and maximum value locations in result
+
+			if matchvalue in [0, 1]:  # For SQDIFF and SQDIFF_NORMED, the best matches are lower values.
+				MPx, MPy = mx, my
+			else:  # Other cases, best matches are higher values.
+				MPx, MPy = Mx, My
+
+			# Normed methods give better results, ie matchvalue = [1,3,5], others sometimes shows errors
+			cv2.rectangle(img2, (MPx, MPy), (MPx + tcols, MPy + trows), (0, 0, 255), 2)
+
+			cv2.imshow('input', img2)
+			cv2.imshow('output', result)
+
+
+
+
 		#initial position of the main car
 		self.car_x = (self.display_width / 2) - (self.object_width / 2)
 		self.car_y = self.display_height - self.object_height
@@ -145,11 +188,8 @@ class CarGame():
 			self.screen.blit(self.curObjectImage, (self.objectX, self.objectY))
 
 			self.moveObjects()
-			#object went out of the page from bottom (car or traffic)
+			#object went out of the page
 			if self.objectY > self.display_height:
-				self.addObject()
-			#object went out of the page from right (person)
-			if self.objectX > self.display_width:
 				self.addObject()
 
 			if self.curObject == 1:
@@ -161,9 +201,29 @@ class CarGame():
 				elif self.counter >= 240:
 					self.isRedSign = False
 					self.curObjectImage = self.greenSign
-			if self.curObject == 2:
-				self.counter += 1
-			
+			pg_img=pygame.display.get_surface()
+
+			color_image = pygame.surfarray.array3d(pg_img)
+
+			color_image = cv2.transpose(color_image)
+			color_image = cv2.cvtColor(color_image, cv2.COLOR_RGB2BGR)
+			g=cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
+
+			# --- display CV2 image ---
+			car_match(4,g)
+			traffic_match(4,g)
+
+			cv2.imshow('Color', color_image)
+			#cv2.waitKey(0)
+			#cv2.destroyAllWindows()
+
+
+
+
+
+
+
+
 			pygame.display.update() # update the screen
 			self.clock.tick(60) # frame per sec
 
@@ -174,55 +234,34 @@ class CarGame():
 				pygame.quit()
 				quit()
 
-		#Get the image of the game
-		pg_img = pygame.display.get_surface()
-		color_image = pygame.surfarray.array3d(pg_img)
-		color_image = cv2.transpose(color_image)
-		color_image = cv2.cvtColor(color_image, cv2.COLOR_RGB2BGR)
-		g = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
-
-		if self.curObject == 0:
-			direction = self.Controller.getDirection(g, self.car_x, self.car_y)
-		elif self.curObject == 1:
-			if self.counter < 100:
-				direction = Direction.FORWARD
-			elif self.counter < 240:
-				direction = Direction.STOP
-			else:
-				direction = Direction.FORWARD
-		else:
-			if self.counter < 10:
-				direction = Direction.FORWARD
-			elif self.counter < 180:
-				direction = Direction.STOP
-			else:
-				direction = Direction.FORWARD
-		
-
-		#move forward by default
-		self.personSpeed = 1
-		self.carSpeed = 3
-		self.bgSpeed = 6
-
-		if direction == Direction.LEFT:
-			self.car_x_change = -5
-		elif direction == Direction.RIGHT:
-			self.car_x_change = 5		
-		elif direction == Direction.FORWARD:
-			self.car_x_change = 0
-		elif direction == Direction.STOP:
-			self.personSpeed = 1
-			self.carSpeed = -3
-			self.bgSpeed = 0
-			self.car_x_change = 0
-			
+			#left or right buttons prssed
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_LEFT:
+					self.car_x_change = -5
+				elif event.key == pygame.K_RIGHT:
+					self.car_x_change = 5
+			#up button pressed
+				elif event.key == pygame.K_UP:
+					self.personSpeed = 2
+					self.carSpeed = 3
+					self.bgSpeed = 6
+			#left or right buttons released			
+			if event.type == pygame.KEYUP:
+				if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+					self.car_x_change = 0
+			#UP button released
+				elif event.key == pygame.K_UP:
+					self.personSpeed = 0
+					self.carSpeed = -3
+					self.bgSpeed = 0
 		self.car_x += self.car_x_change
+		
 
 	# add another car, a person or a traffic sign
 	def addObject(self):
 		#random object
-		self.curObject = random.randrange(1000) % 3
-		#self.curObject = 0
+		self.curObject = random.randrange(1000) % 2
+		#self.curObject = 1
 		self.isRedSign = False
 		if self.curObject == 0: # add a car
 			road_start_x =  (self.display_width/2)-112
@@ -236,13 +275,12 @@ class CarGame():
 			self.curObjectImage = self.redSign
 		else: # add a person
 			self.curObjectImage = self.person
-			self.objectX = self.display_width/2 - 140 - self.object_width/2
 
 		self.counter = 0
 		self.objectY = -200
 	
-
 	def moveObjects(self):
+		
 		self.bg_Img1_y += self.bgSpeed
 		self.bg_Img2_y += self.bgSpeed
 
@@ -260,7 +298,6 @@ class CarGame():
 			self.objectY += self.bgSpeed
 		else: #person
 			self.objectX += self.personSpeed
-			self.objectY += self.bgSpeed
 
 	def checkCrash(self, car_x, car_y):
 		road_start_x = (self.display_width/2) - 112
@@ -273,7 +310,7 @@ class CarGame():
 			self.crash(car_x , car_y)
 
 		#check crashing with a car
-		if (self.curObject == 0 or self.curObject==1) and car_y < self.objectY + self.object_height:
+		if self.curObject == 0 and car_y < self.objectY + self.object_height:
 			if car_x >= self.objectX and car_x <= self.objectX + self.object_width:
 				self.crash(car_x-25, car_y-self.object_height/2)
 			if car_x + self.object_width >= self.objectX and car_x+self.object_width <= self.objectX+self.object_width:
