@@ -145,8 +145,11 @@ class CarGame():
 			self.screen.blit(self.curObjectImage, (self.objectX, self.objectY))
 
 			self.moveObjects()
-			#object went out of the page
+			#object went out of the page from bottom (car or traffic)
 			if self.objectY > self.display_height:
+				self.addObject()
+			#object went out of the page from right (person)
+			if self.objectX > self.display_width:
 				self.addObject()
 
 			if self.curObject == 1:
@@ -158,6 +161,8 @@ class CarGame():
 				elif self.counter >= 240:
 					self.isRedSign = False
 					self.curObjectImage = self.greenSign
+			if self.curObject == 2:
+				self.counter += 1
 			
 			pygame.display.update() # update the screen
 			self.clock.tick(60) # frame per sec
@@ -185,10 +190,17 @@ class CarGame():
 				direction = Direction.STOP
 			else:
 				direction = Direction.FORWARD
-
+		else:
+			if self.counter < 10:
+				direction = Direction.FORWARD
+			elif self.counter < 180:
+				direction = Direction.STOP
+			else:
+				direction = Direction.FORWARD
+		
 
 		#move forward by default
-		self.personSpeed = 2
+		self.personSpeed = 1
 		self.carSpeed = 3
 		self.bgSpeed = 6
 
@@ -199,7 +211,7 @@ class CarGame():
 		elif direction == Direction.FORWARD:
 			self.car_x_change = 0
 		elif direction == Direction.STOP:
-			self.personSpeed = 0
+			self.personSpeed = 1
 			self.carSpeed = -3
 			self.bgSpeed = 0
 			self.car_x_change = 0
@@ -209,7 +221,7 @@ class CarGame():
 	# add another car, a person or a traffic sign
 	def addObject(self):
 		#random object
-		self.curObject = random.randrange(1000) % 2
+		self.curObject = random.randrange(1000) % 3
 		#self.curObject = 0
 		self.isRedSign = False
 		if self.curObject == 0: # add a car
@@ -224,6 +236,7 @@ class CarGame():
 			self.curObjectImage = self.redSign
 		else: # add a person
 			self.curObjectImage = self.person
+			self.objectX = self.display_width/2 - 140 - self.object_width/2
 
 		self.counter = 0
 		self.objectY = -200
@@ -247,6 +260,7 @@ class CarGame():
 			self.objectY += self.bgSpeed
 		else: #person
 			self.objectX += self.personSpeed
+			self.objectY += self.bgSpeed
 
 	def checkCrash(self, car_x, car_y):
 		road_start_x = (self.display_width/2) - 112
@@ -259,7 +273,7 @@ class CarGame():
 			self.crash(car_x , car_y)
 
 		#check crashing with a car
-		if self.curObject == 0 and car_y < self.objectY + self.object_height:
+		if (self.curObject == 0 or self.curObject==1) and car_y < self.objectY + self.object_height:
 			if car_x >= self.objectX and car_x <= self.objectX + self.object_width:
 				self.crash(car_x-25, car_y-self.object_height/2)
 			if car_x + self.object_width >= self.objectX and car_x+self.object_width <= self.objectX+self.object_width:
